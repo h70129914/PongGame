@@ -5,8 +5,9 @@ TagManager:
   serializedVersion: 3
   tags:
   - Wall
-  - Score
   - Paddle
+  - Player Goal
+  - Opponent Goal
   layers:
   - Default
   - TransparentFX
