@@ -10,9 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 8621014451219042506}
   - component: {fileID: 8531457869458585023}
-  - component: {fileID: 7347102341237511955}
+  - component: {fileID: 802701290607311686}
   - component: {fileID: 4703983006400693701}
   - component: {fileID: 5290352713355608690}
+  - component: {fileID: 7632115779233570616}
   m_Layer: 0
   m_Name: Puddle
   m_TagString: Untagged
@@ -93,7 +94,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!50 &7347102341237511955
+--- !u!50 &802701290607311686
 Rigidbody2D:
   serializedVersion: 5
   m_ObjectHideFlags: 0
@@ -178,3 +179,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d600de60718f38d488a378e3804e689c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInput
+  CurrentInputType: 0
+--- !u!114 &7632115779233570616
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7955353602501319796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eff1ab9ead4d8d643b4f48c815ad2694, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PuddleController
+  speed: 5
+  yMin: -3.6
+  yMax: 3.6
