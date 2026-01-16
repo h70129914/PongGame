@@ -6,7 +6,7 @@ public class PuddleMovement
     {
         if (yMovement != 0)
         {
-            Vector3 newPosition = currentPosition + Vector3.up * yMovement * speed * deltaTime;
+            Vector3 newPosition = currentPosition + deltaTime * speed * yMovement * Vector3.up;
             newPosition.y = Mathf.Clamp(newPosition.y, yMin, yMax);
             return newPosition;
         }
