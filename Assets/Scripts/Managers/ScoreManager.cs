@@ -7,8 +7,10 @@ using UnityEngine;
 public static class ScoreManager
 {
     private static int playerScore = 0;
+    private static List<int> scores = new();
     private const string LeaderboardFileName = "leaderboard.json";
     public static event Action<int> ScoreChanged;
+    private static bool isSavingDisabled = false;
 
     [Serializable]
     private class LeaderboardData
@@ -19,7 +21,7 @@ public static class ScoreManager
     public static int PlayerScore
     {
         get { return playerScore; }
-        set 
+        set
         {
             playerScore = value;
             ScoreChanged?.Invoke(playerScore);
@@ -28,42 +30,35 @@ public static class ScoreManager
 
     public static void ResetScore()
     {
-        playerScore = 0;
+        PlayerScore = 0;
     }
 
     public static void UpdateScore()
     {
-        string path = Path.Combine(Application.persistentDataPath, LeaderboardFileName);
-        LeaderboardData leaderboard = new();
+        if (playerScore <= 0)
+            return;
 
-        if (File.Exists(path))
-        {
-            string json = File.ReadAllText(path);
-            if (!string.IsNullOrEmpty(json))
-            {
-                leaderboard = JsonUtility.FromJson<LeaderboardData>(json);
-            }
-        }
+        AddScoreToList(playerScore);
 
-        // The list is kept sorted ascending.
-        // Check if the new score qualifies for the top 10.
-        if (leaderboard.scores.Count < 10 || playerScore > leaderboard.scores.First())
-        {
-            if (leaderboard.scores.Count >= 10)
-            {
-                // Remove the lowest score to make room for the new one.
-                leaderboard.scores.RemoveAt(0);
-            }
-            
-            leaderboard.scores.Add(playerScore);
-            leaderboard.scores.Sort(); // Sorts ascending by default
-        }
-
-        string newJson = JsonUtility.ToJson(leaderboard);
-        File.WriteAllText(path, newJson);
+        if (!isSavingDisabled)
+            Save();
     }
 
-    public static List<int> GetLeaderboard()
+    private static void AddScoreToList(int newScore)
+    {
+        if (scores.Count < 10 || newScore > scores.First())
+        {
+            if (scores.Count >= 10)
+            {
+                scores.RemoveAt(0);
+            }
+
+            scores.Add(newScore);
+            scores.Sort();
+        }
+    }
+
+    public static void Load()
     {
         string path = Path.Combine(Application.persistentDataPath, LeaderboardFileName);
         if (File.Exists(path))
@@ -72,19 +67,44 @@ public static class ScoreManager
             if (!string.IsNullOrEmpty(json))
             {
                 LeaderboardData leaderboard = JsonUtility.FromJson<LeaderboardData>(json);
-                return leaderboard.scores;
+                scores = leaderboard.scores ?? new List<int>();
             }
         }
-        return new List<int>();
+        else
+        {
+            scores = new List<int>();
+        }
+    }
+
+    public static void Save()
+    {
+        string path = Path.Combine(Application.persistentDataPath, LeaderboardFileName);
+        LeaderboardData leaderboard = new() { scores = scores };
+        string newJson = JsonUtility.ToJson(leaderboard);
+        File.WriteAllText(path, newJson);
+    }
+
+    public static List<int> GetLeaderboard()
+    {
+        return new List<int>(scores);
     }
 
     public static int GetHighestScore()
     {
-        var leaderboard = GetLeaderboard();
-        if (leaderboard.Count > 0)
+        if (scores.Count > 0)
         {
-            return leaderboard.Max();
+            return scores.Max();
         }
         return 0;
+    }
+    
+    public static void ResetLeaderboard()
+    {
+        scores.Clear();
+    }
+
+    public static void DisableSavingForTests(bool disableSaving)
+    {
+        isSavingDisabled = disableSaving;
     }
 }

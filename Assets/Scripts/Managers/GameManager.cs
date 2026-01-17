@@ -4,6 +4,11 @@ public class GameManager : MonoBehaviour
 {
     private GameplayUIController gameplayUIController;
 
+    private void Awake()
+    {
+        ScoreManager.Load();
+    }
+
     void Start()
     {
         gameplayUIController = FindAnyObjectByType<GameplayUIController>();

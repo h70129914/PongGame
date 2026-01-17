@@ -1,37 +1,21 @@
 using NUnit.Framework;
-using UnityEngine;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 public class ScoreManagerTests
 {
-    private string leaderboardPath;
-
     [SetUp]
     public void Setup()
     {
-        // Path for the test leaderboard file
-        leaderboardPath = Path.Combine(Application.persistentDataPath, "leaderboard.json");
-        
-        // Ensure the file doesn't exist before each test
-        if (File.Exists(leaderboardPath))
-        {
-            File.Delete(leaderboardPath);
-        }
-        
-        // Reset the score in the manager
+        ScoreManager.DisableSavingForTests(true);
         ScoreManager.ResetScore();
+        ScoreManager.ResetLeaderboard();
     }
 
     [TearDown]
     public void Teardown()
     {
-        // Clean up the file after each test
-        if (File.Exists(leaderboardPath))
-        {
-            File.Delete(leaderboardPath);
-        }
+        ScoreManager.DisableSavingForTests(false);
     }
 
     [Test]
@@ -43,7 +27,7 @@ public class ScoreManagerTests
     }
 
     [Test]
-    public void GetLeaderboard_ReturnsEmptyListWhenNoFileExists()
+    public void GetLeaderboard_ReturnsEmptyListInitially()
     {
         var leaderboard = ScoreManager.GetLeaderboard();
         Assert.IsNotNull(leaderboard);
@@ -140,5 +124,37 @@ public class ScoreManagerTests
         // Assert
         Assert.AreEqual(10, leaderboard.Count);
         CollectionAssert.AreEqual(expectedTop10, leaderboard);
+    }
+
+    [Test]
+    public void GetHighestScore_ReturnsHighestScore()
+    {
+        // Arrange: Add some scores
+        ScoreManager.PlayerScore = 50;
+        ScoreManager.UpdateScore();
+        ScoreManager.PlayerScore = 20;
+        ScoreManager.UpdateScore();
+        ScoreManager.PlayerScore = 80;
+        ScoreManager.UpdateScore();
+
+        // Act
+        var highestScore = ScoreManager.GetHighestScore();
+
+        // Assert
+        Assert.AreEqual(80, highestScore);
+    }
+
+    [Test]
+    public void UpdateScore_DoesNotUpdateForZeroOrNegativeScore()
+    {
+        // Act
+        ScoreManager.PlayerScore = 0;
+        ScoreManager.UpdateScore();
+        ScoreManager.PlayerScore = -10;
+        ScoreManager.UpdateScore();
+
+        // Assert
+        var leaderboard = ScoreManager.GetLeaderboard();
+        Assert.AreEqual(0, leaderboard.Count);
     }
 }
