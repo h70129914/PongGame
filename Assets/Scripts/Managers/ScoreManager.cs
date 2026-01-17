@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using TMPro;
 using UnityEngine;
 
 public static class ScoreManager
@@ -77,5 +76,15 @@ public static class ScoreManager
             }
         }
         return new List<int>();
+    }
+
+    public static int GetHighestScore()
+    {
+        var leaderboard = GetLeaderboard();
+        if (leaderboard.Count > 0)
+        {
+            return leaderboard.Max();
+        }
+        return 0;
     }
 }

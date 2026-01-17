@@ -33,6 +33,7 @@ public class GameManager : MonoBehaviour
     private void OnPlayerGoalHit()
     {
         ScoreManager.UpdateScore();
+        gameplayUIController.ShowGameOverMenu();
     }
 
     private void OnNPCGoalHit()

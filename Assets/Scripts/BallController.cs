@@ -2,7 +2,9 @@ using UnityEngine;
 
 public class BallController : MonoBehaviour
 {
-    [SerializeField] private float speed = 5f;
+    [SerializeField] private float startingSpeed = 5f;
+    [SerializeField] private float maxSpeed = 10;
+    private float currentSpeed;
     private Rigidbody2D rb2D;
     private Vector2 moveDirection;
 
@@ -19,13 +21,14 @@ public class BallController : MonoBehaviour
         {
             Debug.LogError("Rigidbody2D component not found on " + gameObject.name);
         }
+        currentSpeed = startingSpeed;
     }
 
     private void FixedUpdate()
     {
         if (rb2D != null && moveDirection != Vector2.zero)
         {
-            rb2D.linearVelocity = moveDirection * speed;
+            rb2D.linearVelocity = moveDirection * currentSpeed;
         }
     }
 
@@ -49,7 +52,8 @@ public class BallController : MonoBehaviour
     {
         if (other.CompareTag("Paddle"))
         {
-            speed *= 1.25f;
+            currentSpeed = Mathf.Clamp(currentSpeed *= 1.25f, startingSpeed, maxSpeed);
+            
             Bounce(other);
         }
 
