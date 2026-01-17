@@ -19,11 +19,9 @@ public class BallController : MonoBehaviour
         {
             Debug.LogError("Rigidbody2D component not found on " + gameObject.name);
         }
-
-        moveDirection = new Vector2(0.5f, 0.75f);
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         if (rb2D != null && moveDirection != Vector2.zero)
         {
@@ -31,33 +29,31 @@ public class BallController : MonoBehaviour
         }
     }
 
-    public void Bounce(Vector2 normal)
+    private void Bounce(Collider2D other)
     {
+        // Calculate the normal based on the collision point
+        Vector2 collisionPoint = other.ClosestPoint(transform.position);
+        Vector2 normal = ((Vector2)transform.position - collisionPoint).normalized;
+
+        // If normal is zero (edge case), use the direction from other to this
+        if (normal == Vector2.zero)
+        {
+            normal = (transform.position - other.transform.position).normalized;
+        }
         // Reflect the move direction off the normal
         moveDirection = Vector2.Reflect(moveDirection, normal).normalized;
+        
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Paddle") || other.CompareTag("Wall"))
+        if (other.CompareTag("Paddle"))
         {
-            // Calculate the normal based on the collision point
-            Vector2 collisionPoint = other.ClosestPoint(transform.position);
-            Vector2 normal = ((Vector2)transform.position - collisionPoint).normalized;
-
-            // If normal is zero (edge case), use the direction from other to this
-            if (normal == Vector2.zero)
-            {
-                normal = (transform.position - other.transform.position).normalized;
-            }
-
-            Bounce(normal);
+            speed *= 1.25f;
+            Bounce(other);
         }
-        if(other.CompareTag("Goal"))
-        {
-            // Reset ball position and direction
-            transform.position = Vector2.zero;
-            moveDirection = new Vector2(0.5f, 0.75f).normalized;
-        }
+
+        else if (other.CompareTag("Wall"))
+            Bounce(other);
     }
 }

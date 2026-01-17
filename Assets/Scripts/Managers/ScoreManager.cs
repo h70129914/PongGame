@@ -1,14 +1,17 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public static class ScoreManager
 {
     private static int playerScore = 0;
     private const string LeaderboardFileName = "leaderboard.json";
+    public static event Action<int> ScoreChanged;
 
-    [System.Serializable]
+    [Serializable]
     private class LeaderboardData
     {
         public List<int> scores = new();
@@ -17,7 +20,11 @@ public static class ScoreManager
     public static int PlayerScore
     {
         get { return playerScore; }
-        set { playerScore = value; }
+        set 
+        {
+            playerScore = value;
+            ScoreChanged?.Invoke(playerScore);
+        }
     }
 
     public static void ResetScore()

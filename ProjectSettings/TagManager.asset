@@ -6,8 +6,8 @@ TagManager:
   tags:
   - Wall
   - Paddle
-  - Player Goal
-  - Opponent Goal
+  - Goal
+  - Ball
   layers:
   - Default
   - TransparentFX
