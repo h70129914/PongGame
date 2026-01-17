@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/LeaderboardEntry.uss?fileID=7433441132597879392&amp;guid=7220c76b2724b39408cd7d7f25ec828a&amp;type=3#LeaderboardEntry" />
+    <ui:VisualElement name="entry-container" class="entry-container">
+        <ui:Label name="index-label" class="index-label" />
+        <ui:Label name="score-label" class="score-label" />
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/MainMenu.uss?fileID=7433441132597879392&amp;guid=ce6f4ed38a592354ebf71655edb0f176&amp;type=3#MainMenu" />
+    <ui:VisualElement name="main-menu-container" class="main-menu-container">
+        <ui:Button name="play-button" text="Play" class="main-menu-button" />
+        <ui:Button name="leaderboard-button" text="Leaderboard" class="main-menu-button" />
+    </ui:VisualElement>
+</ui:UXML>

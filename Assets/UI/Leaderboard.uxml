@@ -1,0 +1,8 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/Leaderboard.uss?fileID=7433441132597879392&amp;guid=6e8d32b9b9a0253418b3abc5d7dc5058&amp;type=3#Leaderboard" />
+    <ui:VisualElement name="leaderboard-container" class="leaderboard-container">
+        <ui:Button name="back-button" text="Back" class="back-button" />
+        <ui:Label name="title-label" text="Leaderboard" class="title-label" />
+        <ui:ScrollView name="entries-container" class="entries-container" />
+    </ui:VisualElement>
+</ui:UXML>
