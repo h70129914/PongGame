@@ -191,9 +191,4 @@ public class MainMenuController : MonoBehaviour
     private void HideDifficultySelection() => mainMenuView.ShowDifficultySelectionContainer(false);
 }
 
-public enum Difficulty
-{
-    Easy,
-    Medium,
-    Hard
-}
+

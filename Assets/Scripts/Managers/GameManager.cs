@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+
+
     private GameplayUIController gameplayUIController;
 
     private void Awake()
@@ -13,6 +15,7 @@ public class GameManager : MonoBehaviour
     {
         gameplayUIController = FindAnyObjectByType<GameplayUIController>();
         GoalConroller.GoalHit += OnGoalHit;
+
     }
 
     private void OnDestroy()
@@ -46,4 +49,12 @@ public class GameManager : MonoBehaviour
         ScoreManager.PlayerScore++;
         BallSpawner.instance.Spawn();
     }
+
+ 
+}
+
+public enum GameMode
+{
+    PlayerVsNPC,
+    PlayerVsPlayer,
 }
