@@ -19,11 +19,6 @@ public class PaddleNPC
         }
     }
 
-    /// <summary>
-    /// Calculates the Y movement direction for the NPC paddle based on the ball's movement direction.
-    /// Returns 1 for upward movement, -1 for downward movement, or 0 for no movement.
-    /// </summary>
-    /// <returns>Y movement direction: 1 (up), -1 (down), or 0 (no movement)</returns>
     public int CalculateMovement()
     {
         if (Ball == null)

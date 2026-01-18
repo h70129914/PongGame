@@ -119,8 +119,8 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
+  m_CollisionDetection: 1
+  m_Constraints: 4
 --- !u!61 &4703983006400693701
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -179,7 +179,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d600de60718f38d488a378e3804e689c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInput
-  CurrentInputType: 0
+  sensitivity: 0.01
 --- !u!114 &7632115779233570616
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -193,5 +193,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PuddleController
   speed: 5
-  yMin: -3.6
-  yMax: 3.6
+  yMin: -3.8
+  yMax: 3.8
+  paddleController: 0

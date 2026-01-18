@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -9,35 +10,78 @@ public class PuddleController : MonoBehaviour
     [SerializeField] private float yMax;
     [SerializeField] private PaddleController paddleController;
 
+    private Camera mainCamera;
     private Rigidbody2D rb;
-    private PlayerInput playerInput;
-    private PuddleMovement puddleMovement;
+
     private PaddleNPC paddleNPC;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        playerInput = GetComponent<PlayerInput>();
-        puddleMovement = new PuddleMovement();
         paddleNPC = new PaddleNPC();
+        mainCamera = Camera.main;
     }
 
     void FixedUpdate()
     {
-        int yMovement = 0;
-
         switch (paddleController)
         {
             case PaddleController.Player:
-                yMovement = playerInput.YMovement;
+                MoveWithPlayerInput();
                 break;
             case PaddleController.NPC:
-                yMovement = paddleNPC.CalculateMovement();
+                MoveWithNPC();
                 break;
         }
+    }
 
-        Vector3 newPosition = puddleMovement.CalculateNewPosition(transform.position, yMovement, speed, Time.fixedDeltaTime, yMin, yMax);
-        rb.MovePosition(newPosition);
+    private void MoveWithNPC()
+    {
+        int inputY = paddleNPC.CalculateMovement();
+
+        float newY = rb.position.y + inputY * speed * Time.fixedDeltaTime;
+
+        newY = Mathf.Clamp(newY, yMin, yMax);
+
+        rb.MovePosition(new Vector2(rb.position.x, newY));
+    }
+
+    private void MoveWithPlayerInput()
+    {
+        switch (GameplaySettings.SelectedInputType)
+        {
+            case InputType.Mouse:
+                MoveWithMouse();
+                break;
+            case InputType.Keyboard:
+                MoveWithKeyboard();
+                break;
+        }
+    }
+
+    private void MoveWithMouse()
+    {
+        Vector3 mouseScreenPos = Input.mousePosition;
+        Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(mouseScreenPos);
+        float clampedY = Mathf.Clamp(mouseWorldPos.y, yMin, yMax);
+
+        Vector2 targetPosition = new(
+            rb.position.x,
+            clampedY
+        );
+
+        rb.MovePosition(targetPosition);
+    }
+
+    private void MoveWithKeyboard()
+    {
+        float inputY = Input.GetAxisRaw("Vertical");
+
+        float newY = rb.position.y + inputY * speed * Time.fixedDeltaTime;
+
+        newY = Mathf.Clamp(newY, yMin, yMax);
+
+        rb.MovePosition(new Vector2(rb.position.x, newY));
     }
 }
 
