@@ -38,8 +38,6 @@ public class PlayerInput : MonoBehaviour
                 YMovement = 0;
             }
         }
-
-        Debug.Log("YMovement: " + YMovement);
     }
 }
 

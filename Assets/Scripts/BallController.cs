@@ -7,6 +7,7 @@ public class BallController : MonoBehaviour
     private float currentSpeed;
     private Rigidbody2D rb2D;
     private Vector2 moveDirection;
+    private static bool direction;
 
     public Vector2 MoveDirection
     {
@@ -22,6 +23,7 @@ public class BallController : MonoBehaviour
             Debug.LogError("Rigidbody2D component not found on " + gameObject.name);
         }
         currentSpeed = startingSpeed;
+        SetInitialDirection();
     }
 
     private void FixedUpdate()
@@ -31,6 +33,26 @@ public class BallController : MonoBehaviour
             rb2D.linearVelocity = moveDirection * currentSpeed;
         }
     }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Paddle"))
+        {
+            currentSpeed = Mathf.Clamp(currentSpeed *= 1.25f, startingSpeed, maxSpeed);
+            
+            Bounce(other);
+        }
+
+        else if (other.CompareTag("Wall"))
+            Bounce(other);
+    }
+
+    private void SetInitialDirection()
+    {
+        MoveDirection = new Vector2(Random.Range(0.5f, 1), 1) * (direction ? 1 : -1);
+        direction = !direction;
+    }
+
 
     private void Bounce(Collider2D other)
     {
@@ -48,16 +70,4 @@ public class BallController : MonoBehaviour
         
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Paddle"))
-        {
-            currentSpeed = Mathf.Clamp(currentSpeed *= 1.25f, startingSpeed, maxSpeed);
-            
-            Bounce(other);
-        }
-
-        else if (other.CompareTag("Wall"))
-            Bounce(other);
-    }
 }
