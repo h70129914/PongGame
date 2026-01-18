@@ -36,6 +36,9 @@ public class MainMenuController : MonoBehaviour
         // Setup Window 1: Main Menu button callbacks
         SetupWindow1();
 
+        // Setup Window 1 (Game Mode Selection): Game Mode Selection button callbacks
+        SetupWindow1GameMode();
+
         // Setup Window 2: Control Selection button callbacks
         SetupWindow2();
 
@@ -44,6 +47,7 @@ public class MainMenuController : MonoBehaviour
 
         // Show main menu by default, hide other windows
         ShowMainMenu();
+        HideGameModeSelection();
         HideControlSelection();
         HideDifficultySelection();
     }
@@ -59,6 +63,21 @@ public class MainMenuController : MonoBehaviour
         {
             mainMenuView.LeaderboardButton.clicked += OnLeaderboardButtonClicked;
         }
+    }
+
+    private void SetupWindow1GameMode()
+    {
+        if (mainMenuView.OnePlayerButton != null)
+        {
+            mainMenuView.OnePlayerButton.clicked += OnOnePlayerButtonClicked;
+        }
+
+        if (mainMenuView.GameModeBackButton != null)
+        {
+            mainMenuView.GameModeBackButton.clicked += OnGameModeBackButtonClicked;
+        }
+
+        // Two Players button is disabled - no functionality yet
     }
 
     private void SetupWindow2()
@@ -104,7 +123,18 @@ public class MainMenuController : MonoBehaviour
 
     private void OnPlayButtonClicked()
     {
-        ShowControlSelection();
+        ShowGameModeSelection();
+    }
+
+    private void OnOnePlayerButtonClicked()
+    {
+        GameplaySettings.SelectedMode = GameMode.PlayerVsNPC;
+        ShowDifficultySelection();
+    }
+
+    private void OnGameModeBackButtonClicked()
+    {
+        ShowMainMenu();
     }
 
     private void OnLeaderboardButtonClicked()
@@ -144,7 +174,7 @@ public class MainMenuController : MonoBehaviour
 
     private void OnDifficultyBackButtonClicked()
     {
-        ShowControlSelection();
+        ShowGameModeSelection();
     }
 
     private void StartGameplay()
@@ -153,29 +183,31 @@ public class MainMenuController : MonoBehaviour
         SceneManager.LoadScene("Gameplay");
     }
 
-    // Window visibility methods
     public void ShowMainMenu()
     {
-        if (mainMenuView != null && mainMenuView.MainMenuContainer != null)
-        {
-            mainMenuView.MainMenuContainer.style.display = DisplayStyle.Flex;
-        }
+        mainMenuView.ShowMainMenuContainer(true);
+        HideGameModeSelection();
         HideControlSelection();
         HideDifficultySelection();
     }
 
-    private void HideMainMenu()
+    private void HideMainMenu() => mainMenuView.ShowMainMenuContainer(false);
+
+    private void ShowGameModeSelection()
     {
-        if (mainMenuView != null && mainMenuView.MainMenuContainer != null)
-        {
-            mainMenuView.MainMenuContainer.style.display = DisplayStyle.None;
-        }
+        mainMenuView.ShowGameModeSelectionContainer(true);
+        HideMainMenu();
+        HideControlSelection();
+        HideDifficultySelection();
     }
+
+    private void HideGameModeSelection() => mainMenuView.ShowGameModeSelectionContainer(false);
 
     private void ShowControlSelection()
     {
         mainMenuView.ShowControlSelectionContainer(true);
         HideMainMenu();
+        HideGameModeSelection();
         HideDifficultySelection();
     }
 
@@ -185,6 +217,7 @@ public class MainMenuController : MonoBehaviour
     {
         mainMenuView.ShowDifficultySelectionContainer(true);
         HideMainMenu();
+        HideGameModeSelection();
         HideControlSelection();
     }
 

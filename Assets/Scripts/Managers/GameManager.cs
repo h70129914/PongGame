@@ -52,9 +52,3 @@ public class GameManager : MonoBehaviour
 
  
 }
-
-public enum GameMode
-{
-    PlayerVsNPC,
-    PlayerVsPlayer,
-}

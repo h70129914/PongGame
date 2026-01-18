@@ -4,6 +4,11 @@
         <ui:Button name="play-button" text="Play" class="main-menu-button" />
         <ui:Button name="leaderboard-button" text="Leaderboard" class="main-menu-button" />
     </ui:VisualElement>
+    <ui:VisualElement name="game-mode-selection-container" class="main-menu-container" style="display: none;">
+        <ui:Button name="one-player-button" text="One Player" class="main-menu-button" />
+        <ui:Button name="two-players-button" text="Two Players" class="main-menu-button" enabled="false" />
+        <ui:Button name="game-mode-back-button" text="Back" class="main-menu-button" />
+    </ui:VisualElement>
     <ui:VisualElement name="control-selection-container" class="main-menu-container" style="display: none;">
         <ui:Button name="mouse-button" text="Mouse" class="main-menu-button" />
         <ui:Button name="keyboard-button" text="Keyboard" class="main-menu-button" />
