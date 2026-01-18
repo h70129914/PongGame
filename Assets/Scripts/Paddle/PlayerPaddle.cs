@@ -1,49 +1,24 @@
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(PlayerInput))]
-public class PuddleController : MonoBehaviour
+public class PlayerPaddle : MonoBehaviour
 {
     [SerializeField] private float speed;
     [SerializeField] private float yMin;
     [SerializeField] private float yMax;
-    [SerializeField] private PaddleController paddleController;
 
     private Camera mainCamera;
     private Rigidbody2D rb;
 
-    private PaddleNPC paddleNPC;
-
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        paddleNPC = new PaddleNPC();
         mainCamera = Camera.main;
     }
 
     void FixedUpdate()
     {
-        switch (paddleController)
-        {
-            case PaddleController.Player:
-                MoveWithPlayerInput();
-                break;
-            case PaddleController.NPC:
-                MoveWithNPC();
-                break;
-        }
-    }
-
-    private void MoveWithNPC()
-    {
-        int inputY = paddleNPC.CalculateMovement();
-
-        float newY = rb.position.y + inputY * speed * Time.fixedDeltaTime;
-
-        newY = Mathf.Clamp(newY, yMin, yMax);
-
-        rb.MovePosition(new Vector2(rb.position.x, newY));
+        MoveWithPlayerInput();
     }
 
     private void MoveWithPlayerInput()
