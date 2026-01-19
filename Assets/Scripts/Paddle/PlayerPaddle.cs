@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -18,44 +19,33 @@ public class PlayerPaddle : MonoBehaviour
 
     void FixedUpdate()
     {
-        MoveWithPlayerInput();
-    }
-
-    private void MoveWithPlayerInput()
-    {
-        switch (GameplaySettings.SelectedInputType)
-        {
-            case InputType.Mouse:
-                MoveWithMouse();
-                break;
-            case InputType.Keyboard:
-                MoveWithKeyboard();
-                break;
-        }
-    }
-
-    private void MoveWithMouse()
-    {
-        Vector3 mouseScreenPos = Input.mousePosition;
-        Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(mouseScreenPos);
-        float clampedY = Mathf.Clamp(mouseWorldPos.y, yMin, yMax);
-
-        Vector2 targetPosition = new(
-            rb.position.x,
-            clampedY
-        );
-
+        float movement = MoveWithPlayerInput();
+        float clampedY = Mathf.Clamp(movement, yMin, yMax);
+        Vector2 targetPosition = new(rb.position.x, clampedY);
         rb.MovePosition(targetPosition);
     }
 
-    private void MoveWithKeyboard()
+    private float MoveWithPlayerInput()
+    {
+        return GameplaySettings.SelectedInputType switch
+        {
+            InputType.Mouse => MoveWithMouse(),
+            InputType.Keyboard => MoveWithKeyboard(),
+            _ => 0,
+        };
+    }
+
+    private float MoveWithMouse()
+    {
+        Vector3 mouseScreenPos = Input.mousePosition;
+        Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(mouseScreenPos);
+        return mouseWorldPos.y;
+    }
+
+    private float MoveWithKeyboard()
     {
         float inputY = Input.GetAxisRaw("Vertical");
-
         float newY = rb.position.y + inputY * speed * Time.fixedDeltaTime;
-
-        newY = Mathf.Clamp(newY, yMin, yMax);
-
-        rb.MovePosition(new Vector2(rb.position.x, newY));
+        return newY;
     }
 }
