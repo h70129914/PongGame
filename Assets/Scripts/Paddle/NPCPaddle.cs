@@ -6,87 +6,93 @@ public class NPCPaddle : MonoBehaviour
     [Header("Movement")]
     public float moveSpeed = 8f;
 
+    public float reactionDistance = 3f; 
+
     [Header("Arena Bounds")]
     public float topWallY;
     public float bottomWallY;
 
-    private Rigidbody2D rb;
-    private Rigidbody2D ballRb;
-    private float targetY;
-    private float currentMoveSpeed;
+    private Rigidbody2D paddleRigidbody;
+    private Rigidbody2D ballRigidbody;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        currentMoveSpeed = moveSpeed;
+        paddleRigidbody = GetComponent<Rigidbody2D>();
     }
 
     void FixedUpdate()
     {
-        if (ballRb == null)
+        if (!ballRigidbody)
         {
             var ball = GameObject.FindGameObjectWithTag("Ball");
             if (ball)
-                ballRb = ball.GetComponent<Rigidbody2D>();
+                ballRigidbody = ball.GetComponent<Rigidbody2D>();
             else
                 return;
         }
 
-        Difficulty difficulty = GameplaySettings.SelectedDifficulty;
+        bool isBallMovingTowardNPC = ballRigidbody.linearVelocity.x < 0f; // Assuming NPC is on the left side
+        if (!isBallMovingTowardNPC)
+            return;
 
+        float targetY = CalculateMovementPosition(paddleRigidbody.position, ballRigidbody.position, ballRigidbody.linearVelocity);
+        float currentMoveSpeed = CalculateMovementSpeed();
+        MoveToTarget(targetY, currentMoveSpeed);
+    }
+
+    public float CalculateMovementPosition(Vector2 paddlePosition, Vector2 ballPosition, Vector2 ballVelocity)
+    {
+        Difficulty difficulty = GameplaySettings.SelectedDifficulty;
+        float targetY = paddlePosition.y;
+        
         switch (difficulty)
         {
             case Difficulty.Hard:
-                // Use ball prediction for hard difficulty
-                currentMoveSpeed = moveSpeed; // Full speed for hard
-                if (ballRb.linearVelocity.x < 0f) // Only predict if ball is moving toward NPC
-                {
-                    targetY = BallPrediction.PredictYAtX(
-                        ballRb.position,
-                        ballRb.linearVelocity,
-                        rb.position.x,
-                        topWallY,
-                        bottomWallY
-                    );
-                }
+                targetY = BallPrediction.PredictYAtX(
+                    ballPosition,
+                    ballVelocity,
+                    paddlePosition.x,
+                    topWallY,
+                    bottomWallY
+                );
                 break;
 
             case Difficulty.Medium:
-                // Medium: Follow ball's current Y position with slight delay
-                // Only react when ball is moving toward NPC
-                currentMoveSpeed = moveSpeed * 0.75f; // 75% speed for medium
-                if (ballRb.linearVelocity.x < 0f)
-                {
-                    targetY = ballRb.position.y;
-                }
+                targetY = ballPosition.y;
                 break;
 
             case Difficulty.Easy:
-                // Easy: Follow ball's current Y position slowly, only when ball is close
-                currentMoveSpeed = moveSpeed * 0.5f; // 50% speed for easy
-                float distanceToBall = Mathf.Abs(ballRb.position.x - rb.position.x);
-                float reactionDistance = 3f; // Only react when ball is within this distance
-                
-                if (ballRb.linearVelocity.x < 0f && distanceToBall < reactionDistance)
-                {
-                    targetY = ballRb.position.y;
-                }
+                float distanceToBall = Mathf.Abs(ballPosition.x - paddlePosition.x);
+                if (distanceToBall < reactionDistance)
+                    targetY = ballPosition.y;
                 break;
         }
 
-        MoveToTarget();
+        return targetY;
     }
 
-    void MoveToTarget()
+    public float CalculateMovementSpeed()
+    {
+        Difficulty difficulty = GameplaySettings.SelectedDifficulty;
+        return difficulty switch
+        {
+            Difficulty.Hard => moveSpeed,
+            Difficulty.Medium => moveSpeed * 0.75f,
+            Difficulty.Easy => moveSpeed * 0.5f,
+            _ => moveSpeed,
+        };
+    }
+
+    private void MoveToTarget(float targetY, float currentMoveSpeed)
     {
         float newY = Mathf.MoveTowards(
-            rb.position.y,
+            paddleRigidbody.position.y,
             targetY,
             currentMoveSpeed * Time.fixedDeltaTime
         );
 
         newY = Mathf.Clamp(newY, bottomWallY, topWallY);
 
-        rb.MovePosition(new Vector2(rb.position.x, newY));
+        paddleRigidbody.MovePosition(new Vector2(paddleRigidbody.position.x, newY));
     }
 }
