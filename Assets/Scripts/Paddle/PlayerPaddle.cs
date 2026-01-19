@@ -59,9 +59,3 @@ public class PlayerPaddle : MonoBehaviour
         rb.MovePosition(new Vector2(rb.position.x, newY));
     }
 }
-
-public enum PaddleController
-{
-    Player,
-    NPC
-}

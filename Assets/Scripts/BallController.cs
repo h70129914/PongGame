@@ -1,73 +1,66 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class BallController : MonoBehaviour
 {
     [SerializeField] private float startingSpeed = 5f;
     [SerializeField] private float maxSpeed = 10;
     private float currentSpeed;
     private Rigidbody2D rb2D;
-    private Vector2 moveDirection;
+
     private static bool direction;
 
-    public Vector2 MoveDirection
-    {
-        get { return moveDirection; }
-        set { moveDirection = value.normalized; }
-    }
+    public Vector2 MoveDirection { get; set; }
 
-    void Start()
+    private void Start()
     {
         rb2D = GetComponent<Rigidbody2D>();
-        if (rb2D == null)
-        {
-            Debug.LogError("Rigidbody2D component not found on " + gameObject.name);
-        }
         currentSpeed = startingSpeed;
         SetInitialDirection();
     }
 
     private void FixedUpdate()
     {
-        if (rb2D != null && moveDirection != Vector2.zero)
-        {
-            rb2D.linearVelocity = moveDirection * currentSpeed;
-        }
+        rb2D.linearVelocity = MoveDirection * currentSpeed;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        Vector2 collisionPoint = other.ClosestPoint(transform.position);
+        Vector3 otherPosition = other.transform.position;
+
+        bool shouldBounce = false;
+
         if (other.CompareTag("Paddle"))
         {
-            currentSpeed = Mathf.Clamp(currentSpeed *= 1.25f, startingSpeed, maxSpeed);
-            
-            Bounce(other);
+            currentSpeed = IncreaseSpeed();
+            shouldBounce = true;
+        }
+        else if (other.CompareTag("Wall"))
+        {
+            shouldBounce = true;
         }
 
-        else if (other.CompareTag("Wall"))
-            Bounce(other);
+        if (shouldBounce)
+            Bounce(transform.position, otherPosition, collisionPoint);
     }
 
-    private void SetInitialDirection()
+    public void SetInitialDirection()
     {
-        MoveDirection = new Vector2(Random.Range(0.5f, 1), 1) * (direction ? 1 : -1);
+        var randomDirection = new Vector2(Random.Range(0.5f, 1), 1).normalized;
+        MoveDirection = randomDirection * (direction ? 1 : -1);
         direction = !direction;
     }
 
+    public float IncreaseSpeed() => Mathf.Clamp(currentSpeed *= 1.25f, startingSpeed, maxSpeed);
 
-    private void Bounce(Collider2D other)
+    public void Bounce(Vector3 ballPosition, Vector3 colliderPosition, Vector2 collisionPoint)
     {
-        // Calculate the normal based on the collision point
-        Vector2 collisionPoint = other.ClosestPoint(transform.position);
-        Vector2 normal = ((Vector2)transform.position - collisionPoint).normalized;
+        Vector2 normal = ((Vector2)ballPosition - collisionPoint).normalized;
 
-        // If normal is zero (edge case), use the direction from other to this
         if (normal == Vector2.zero)
-        {
-            normal = (transform.position - other.transform.position).normalized;
-        }
-        // Reflect the move direction off the normal
-        moveDirection = Vector2.Reflect(moveDirection, normal).normalized;
-        
-    }
+            normal = (ballPosition - colliderPosition).normalized;
 
+        MoveDirection = Vector2.Reflect(MoveDirection, normal).normalized;
+    }
 }
