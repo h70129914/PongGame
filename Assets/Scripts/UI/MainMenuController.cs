@@ -45,9 +45,8 @@ public class MainMenuController : MonoBehaviour
         // Setup Window 3: Difficulty Selection button callbacks
         SetupWindow3();
 
-        // Show main menu by default, hide other windows
-        ShowMainMenu();
-        HideGameModeSelection();
+        // First window: Select Game Mode
+        ShowGameModeSelection();
         HideControlSelection();
         HideDifficultySelection();
     }
@@ -129,7 +128,7 @@ public class MainMenuController : MonoBehaviour
     private void OnOnePlayerButtonClicked()
     {
         GameplaySettings.SelectedMode = GameMode.PlayerVsNPC;
-        ShowDifficultySelection();
+        ShowControlSelection();
     }
 
     private void OnGameModeBackButtonClicked()
@@ -158,7 +157,7 @@ public class MainMenuController : MonoBehaviour
         ShowDifficultySelection();
     }
 
-    private void OnControlBackButtonClicked() => ShowMainMenu();
+    private void OnControlBackButtonClicked() => ShowGameModeSelection();
 
     private void OnEasyButtonClicked() => SelectDeficulty(Difficulty.Easy);
 
@@ -174,7 +173,7 @@ public class MainMenuController : MonoBehaviour
 
     private void OnDifficultyBackButtonClicked()
     {
-        ShowGameModeSelection();
+        ShowControlSelection();
     }
 
     private void StartGameplay()
